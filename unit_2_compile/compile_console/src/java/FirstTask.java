@@ -7,5 +7,6 @@ public class FirstTask {
         String massege = "Console compile";
         console.write(massege);
         console.writeUpperCase(massege);
+        console.currentTime();
     }
 }
