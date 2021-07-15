@@ -1,5 +1,11 @@
+
+import consolehelper.Console;
+
 public class FirstTask {
     public static void main(String[] args) {
-        System.out.println("My first task");
+        Console console = new Console();
+        String massege = "Console compile";
+        console.write(massege);
+        console.writeUpperCase(massege);
     }
 }
