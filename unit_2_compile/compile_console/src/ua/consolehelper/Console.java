@@ -1,7 +1,8 @@
-package consolehelper;
+package ua.consolehelper;
 
 import org.apache.commons.lang3.*;
-import time.Time;
+
+import ua.consolehelper.time.Time;
 
 public class Console {
 

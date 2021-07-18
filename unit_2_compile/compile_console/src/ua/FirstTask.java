@@ -1,7 +1,9 @@
+package ua;
 
-import consolehelper.Console;
+import ua.consolehelper.Console;
 
 public class FirstTask {
+
     public static void main(String[] args) {
         Console console = new Console();
         String massege = "Console compile";
