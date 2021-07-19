@@ -1,3 +1,4 @@
+echo off
 echo ==========CONSOLE==========
 cd compile_console
 call startConsole.bat
