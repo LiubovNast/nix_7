@@ -24,6 +24,5 @@ public class Task1 {
         }
 
         System.out.println("Сумма всех введенных цифр: " + sum);
-
     }
 }
