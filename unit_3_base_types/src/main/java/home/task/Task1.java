@@ -5,11 +5,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class Task1 {
+
     public static void countNumbers() {
         int sum = 0;
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Введите строку содержащую цифры");
-
         try {
             String string = reader.readLine();
             String[] temp = string.split("");
@@ -17,12 +17,12 @@ public class Task1 {
                 try {
                     sum += Integer.parseInt(temp[i]);
                 } catch (NumberFormatException e) {
+                    // если есть catch, то хоть в консоль выведи ошибку)
                 }
             }
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
-
         System.out.println("Сумма всех введенных цифр: " + sum);
     }
 }
