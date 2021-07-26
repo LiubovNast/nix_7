@@ -5,11 +5,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class Task2 {
+
     public static void sortAndCountLetters() {
         int[] letters = new int[(int) Character.MAX_VALUE];
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Введите строку содержащую буквы");
-
         try {
             String string = reader.readLine();
             char[] temp = string.toLowerCase().toCharArray();

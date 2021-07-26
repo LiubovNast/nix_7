@@ -5,6 +5,7 @@ import static home.task.Task2.sortAndCountLetters;
 import static home.task.Task3.endOfLessons;
 
 public class HomeTask {
+
     public static void main(String[] args) {
         System.out.println("====Task 1====");
         countNumbers();

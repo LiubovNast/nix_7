@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class Task3 {
+
     public static void endOfLessons() {
         final int startFistLesson = 9;
         final int smallBreak = 5;
