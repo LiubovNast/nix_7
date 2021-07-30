@@ -1,6 +1,7 @@
 package Chess;
 
 public class Tuple {
+
     private final int x;
     private final int y;
 

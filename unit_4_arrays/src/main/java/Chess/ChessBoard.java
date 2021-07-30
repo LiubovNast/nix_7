@@ -5,6 +5,7 @@ import Chess.Pieces.*;
 import java.util.ArrayList;
 
 public class ChessBoard {
+
     private static final int SIZE = 8;
     private final Tile[][] board;
 
@@ -12,6 +13,10 @@ public class ChessBoard {
         board = new Tile[SIZE][SIZE];
         initializeBoard();
         fillBoard();
+    }
+
+    public static int getSIZE() {
+        return SIZE;
     }
 
     public Tile[][] getBoardArray() {

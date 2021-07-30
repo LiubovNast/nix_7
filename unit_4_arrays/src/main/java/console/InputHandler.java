@@ -1,5 +1,6 @@
 package console;
 
+import Chess.ChessBoard;
 import Chess.Tuple;
 
 import java.util.regex.Matcher;
@@ -8,15 +9,13 @@ import java.util.regex.Pattern;
 public class InputHandler {
 
     private final static Pattern validMove = Pattern.compile("([a-hA-H][1-8])([-])([a-hA-H][1-8])", Pattern.CASE_INSENSITIVE);
-    private final BoardMapper mapper;
 
     public InputHandler() {
-        mapper = new BoardMapper();
     }
 
     public Tuple parse(String val) {
-        int x = mapper.map(val.charAt(0));
-        int y = mapper.map(Integer.parseInt(String.valueOf(val.charAt(1))));
+        int x = Character.toLowerCase(val.charAt(0)) - 'a';
+        int y = ChessBoard.getSIZE() - Integer.parseInt(String.valueOf(val.charAt(1)));
         return new Tuple(x, y);
     }
 
