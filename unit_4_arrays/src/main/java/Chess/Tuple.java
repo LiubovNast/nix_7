@@ -17,5 +17,4 @@ public class Tuple {
     public int Y(){
         return y;
     }
-
 }
