@@ -1,5 +1,6 @@
 import levelFirst.ArrayOfNumbers;
 import levelFirst.MoveOfKnight;
+import levelFirst.TriangleArea;
 
 public class ModuleTest {
 
@@ -10,5 +11,8 @@ public class ModuleTest {
 
         System.out.println("==== Task  2 ====");
         MoveOfKnight.canKnightMove();
+
+        System.out.println("==== Task  3 ====");
+        TriangleArea.findAreaOfTriangle();
     }
 }
