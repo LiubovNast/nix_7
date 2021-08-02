@@ -1,6 +1,7 @@
 import levelFirst.ArrayOfNumbers;
 import levelFirst.MoveOfKnight;
 import levelFirst.TriangleArea;
+import levelSecond.ValidString;
 
 public class ModuleTest {
 
@@ -14,5 +15,9 @@ public class ModuleTest {
 
         System.out.println("==== Task  3 ====");
         TriangleArea.findAreaOfTriangle();
+
+        System.out.println("==== LEVEL 2 ====");
+        System.out.println("==== Task  1 ====");
+        ValidString.isValidString();
     }
 }
