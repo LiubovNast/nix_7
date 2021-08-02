@@ -2,6 +2,7 @@ import levelFirst.ArrayOfNumbers;
 import levelFirst.MoveOfKnight;
 import levelFirst.TriangleArea;
 import levelSecond.ValidString;
+import levelThird.GameLife;
 
 public class ModuleTest {
 
@@ -19,5 +20,9 @@ public class ModuleTest {
         System.out.println("==== LEVEL 2 ====");
         System.out.println("==== Task  1 ====");
         ValidString.isValidString();
+
+        System.out.println("==== LEVEL 3 ====");
+        System.out.println("==== Task  1 ====");
+        GameLife.startLife();
     }
 }
