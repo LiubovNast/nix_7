@@ -1,5 +1,4 @@
 import static console.InputConsole.*;
-import static utils.ReverseString.reverse;
 
 public class StringTest {
 
@@ -20,29 +19,29 @@ public class StringTest {
 
         switch (num) {
             case 1:
-                reverseString = reverse(testString, false);
+                reverseString = ReverseString.reverse(testString, false);
                 break;
             case 2:
-                reverseString = reverse(testString, true);
+                reverseString = ReverseString.reverse(testString, true);
                 break;
             case 3:
                 System.out.println("Write substring for reverse:");
                 String substring = getString();
-                reverseString = reverse(testString, substring);
+                reverseString = ReverseString.reverse(testString, substring);
                 break;
             case 4:
                 System.out.println("Write first index:");
                 int first = getInt();
                 System.out.println("Write last index:");
                 int last = getInt();
-                reverseString = reverse(testString, first, last);
+                reverseString = ReverseString.reverse(testString, first, last);
                 break;
             case 5:
                 System.out.println("Write first symbol:");
                 char charFirst = getChar();
                 System.out.println("Write last symbol:");
                 char charLast = getChar();
-                reverseString = reverse(testString, charFirst, charLast);
+                reverseString = ReverseString.reverse(testString, charFirst, charLast);
                 break;
             default:
                 System.out.println("You didn't choose any method");
