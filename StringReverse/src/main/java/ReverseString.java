@@ -1,5 +1,3 @@
-package utils;
-
 public class ReverseString {
 
     public static String reverse(String src, boolean reverseEachWord) {
