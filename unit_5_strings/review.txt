@@ -1,0 +1,7 @@
+нужно было создавать для либы отдельный проект
+а так не понятно, что ты импортишь в помнике)
+
+[ERROR] Failed to execute goal on project unit_5_strings: Could not resolve dependencies for project org.example:unit_5_strings:jar:1.0-SNAPSHOT: Could not find art
+ifact org.example:StringReverse:jar:1.0-SNAPSHOT
+
+7 из 10

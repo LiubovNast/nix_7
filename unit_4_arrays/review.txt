@@ -1,0 +1,5 @@
+что-то мне подсказывает, что это не твой код))
+
+https://github.com/ecly/console_chess/blob/master/src/main/java/Chess/ChessGame.java
+
+7 из 10
