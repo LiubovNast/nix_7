@@ -12,13 +12,12 @@ public class InMemoryAuthorDao {
         authors = changeSizeOfArray(authors);
         author.setId(generateId());
         authors[getNextIndexOfArray(authors)] = author;
-
     }
 
     public void update(Author author) {
         Author inDbAuthor = findAuthorById(author.getId());
         inDbAuthor.setFullName(author.getFullName());
-        inDbAuthor.setHasOneBook (author.isHasOneBook());
+        inDbAuthor.setHasOneBook(author.isHasOneBook());
         inDbAuthor.setIdBooks(author.getIdBooks());
     }
 
@@ -69,21 +68,21 @@ public class InMemoryAuthorDao {
         return id;
     }
 
-        private Author[] changeSizeOfArray(Author[] array) {
-            if (getNextIndexOfArray(array) == array.length) {
-                int newSize = (int) (array.length * 1.5);
-                Author[] temp = new Author[newSize];
-                for (int i = 0; i < array.length; i++) {
-                    temp[i] = array[i];
-                }
-                return temp;
-            } else return array;
-        }
-
-        private int getNextIndexOfArray(Author[] array) {
+    private Author[] changeSizeOfArray(Author[] array) {
+        if (getNextIndexOfArray(array) == array.length) {
+            int newSize = (int) (array.length * 1.5);
+            Author[] temp = new Author[newSize];
             for (int i = 0; i < array.length; i++) {
-                if (array[i] == null) return i;
+                temp[i] = array[i];
             }
-            return array.length;
+            return temp;
+        } else return array;
+    }
+
+    private int getNextIndexOfArray(Author[] array) {
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] == null) return i;
         }
+        return array.length;
+    }
 }

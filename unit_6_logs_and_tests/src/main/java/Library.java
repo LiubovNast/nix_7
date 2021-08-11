@@ -1,6 +1,9 @@
+import controller.Menu;
+
 public class Library {
 
     public static void main(String[] args) {
-        System.out.println("Library.main");
+        Menu menu = new Menu();
+        menu.libraryMenu();
     }
 }
