@@ -3,8 +3,6 @@ package entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Arrays;
-
 @Setter
 @Getter
 public class Book {
@@ -13,16 +11,15 @@ public class Book {
     private String title;
     private String genre;
     private int countOfPages;
-    private int[] idAuthors;
+    private int[] idAuthors = new int[5];
+    private boolean hasOneAuthor = true;
 
     @Override
     public String toString() {
         return "Book{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
+                "title='" + title + '\'' +
                 ", genre='" + genre + '\'' +
                 ", countOfPages=" + countOfPages +
-                ", idAuthors=" + Arrays.toString(idAuthors) +
-                '}';
+                ", Authors: ";
     }
 }

@@ -1,5 +1,6 @@
 package service;
 
+import bd.ArrayBD;
 import dao.InMemoryBookDao;
 import entity.Book;
 import org.slf4j.Logger;
@@ -32,5 +33,12 @@ public class BookService {
 
     public Book[] findAllBooks() {
         return bookDao.findAllBooks();
+    }
+
+    public void updateArrayOfIdAuthors(int id, Book book) {
+        int[] array = book.getIdAuthors();
+        array = ArrayBD.getInstance().changeSizeOfArray(array);
+        array[ArrayBD.getInstance().getNextIndexOfArray(array)] = id;
+        book.setIdAuthors(array);
     }
 }

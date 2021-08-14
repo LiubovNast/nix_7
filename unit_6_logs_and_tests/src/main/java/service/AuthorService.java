@@ -1,5 +1,6 @@
 package service;
 
+import bd.ArrayBD;
 import dao.InMemoryAuthorDao;
 import entity.Author;
 import org.slf4j.Logger;
@@ -12,9 +13,28 @@ public class AuthorService {
 
     private final InMemoryAuthorDao authorDao = new InMemoryAuthorDao();
 
-    public void create(Author author) {
+    public int create(Author author) {
+        Author[] authors = findAllAuthors();
+        for (int i = 0; i < authors.length; i++) {
+            if (authors[i] != null) {
+                if (authors[i].getFullName().equals(author.getFullName())) {
+                    LOGGER_INFO.info("add new book to author.IdBooks: " + author.getFullName());
+                    updateArrayOfIdBooks(author.getIdBooks()[0], authors[i]);
+                    authors[i].setHasOneBook(false);
+                    return authors[i].getId();
+                }
+            }
+        }
         LOGGER_INFO.info("create new author: " + author.getFullName());
         authorDao.create(author);
+        return author.getId();
+    }
+
+    private void updateArrayOfIdBooks(int idBook, Author authorInBD) {
+        int[] array = authorInBD.getIdBooks();
+        array = ArrayBD.getInstance().changeSizeOfArray(array);
+        array[ArrayBD.getInstance().getNextIndexOfArray(array)] = idBook;
+        authorInBD.setIdBooks(array);
     }
 
     public void update(Author author) {
