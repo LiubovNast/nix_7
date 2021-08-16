@@ -116,7 +116,6 @@ public class Actions {
             book.setCountOfPages(countOfPages);
             bookService.update(book, id);
         }
-
     }
 
     public void findBook() {

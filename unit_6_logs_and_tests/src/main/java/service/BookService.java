@@ -74,8 +74,7 @@ public class BookService {
         if (countOfPages < 100) {
             printMessage("This is not book, very thin.");
             return false;
-        }
-        else if (countOfPages > 1000) {
+        } else if (countOfPages > 1000) {
             printMessage("This is not a book, very thick.");
             return false;
         }

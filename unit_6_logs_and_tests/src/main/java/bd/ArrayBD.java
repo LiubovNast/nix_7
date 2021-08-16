@@ -193,8 +193,10 @@ public class ArrayBD {
                 case NOVEL:
                 case FAIRY_TALES:
                 case REFERENCE:
-                case SCIENCE: return true;
-                default: return false;
+                case SCIENCE:
+                    return true;
+                default:
+                    return false;
             }
         } catch (IllegalArgumentException e) {
             LOGGER_ERROR.error(e.getMessage());

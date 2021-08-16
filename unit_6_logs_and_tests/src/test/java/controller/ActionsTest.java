@@ -87,6 +87,7 @@ class ActionsTest {
         books = bookService.findAllBooks();
         Assertions.assertEquals(SIZE_BOOK + 1, books.length);
     }
+
     @Test
     @Order(8)
     void removeAuthor() {
