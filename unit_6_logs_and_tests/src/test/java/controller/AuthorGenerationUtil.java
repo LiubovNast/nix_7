@@ -1,4 +1,4 @@
-package dao;
+package controller;
 
 import entity.Author;
 
@@ -16,25 +16,18 @@ public class AuthorGenerationUtil {
         return author;
     }
 
-    public static Author generateAuthor(String name, int[] books, boolean hasOneBook) {
-        Author author = new Author();
-        author.setFullName(name);
-        author.setIdBooks(books);
-        author.setHasOneBook(hasOneBook);
-        return author;
-    }
-    public static Author generateAuthor(String name, int[] books) {
-        Author author = new Author();
-        author.setFullName(name);
-        author.setIdBooks(books);
-        author.setHasOneBook(books.length == 1);
-        return author;
-    }
-
     public static Author generateAuthor(String name) {
         Author author = new Author();
         author.setFullName(name);
         author.setIdBooks(ID_BOOKS);
+        author.setHasOneBook(hasOneBook);
+        return author;
+    }
+
+    public static Author generateAuthor(String name, int[] idBooks) {
+        Author author = new Author();
+        author.setFullName(name);
+        author.setIdBooks(idBooks);
         author.setHasOneBook(hasOneBook);
         return author;
     }

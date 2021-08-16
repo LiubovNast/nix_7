@@ -22,4 +22,8 @@ public class Book {
                 ", countOfPages=" + countOfPages +
                 ", Authors: ";
     }
+
+    public enum Genre {
+        DETECTIVE, SCIENCE, ADVENTURES, NOVEL, FAIRY_TALES, HUMOR, REFERENCE
+    }
 }

@@ -2,11 +2,16 @@ package bd;
 
 import entity.Author;
 import entity.Book;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Random;
 
+import static controller.Console.printMessage;
+
 public class ArrayBD {
 
+    private static final Logger LOGGER_ERROR = LoggerFactory.getLogger("error");
     private static final int SIZE = 5;
     private static final ArrayBD instance = new ArrayBD();
     Author[] authors = new Author[SIZE];
@@ -25,8 +30,8 @@ public class ArrayBD {
         books[getNextIndexOfArray(Entity.BOOK)] = book;
     }
 
-    public void update(Book book) {
-        Book currentBook = findBookById(book.getId());
+    public void update(Book book, int id) {
+        Book currentBook = findBookById(id);
         currentBook.setTitle(book.getTitle());
         currentBook.setGenre(book.getGenre());
         currentBook.setCountOfPages(book.getCountOfPages());
@@ -179,6 +184,25 @@ public class ArrayBD {
         } else return array;
     }
 
+    public boolean checkGenreOfBook(String genre) {
+        try {
+            switch (Book.Genre.valueOf(genre)) {
+                case ADVENTURES:
+                case DETECTIVE:
+                case HUMOR:
+                case NOVEL:
+                case FAIRY_TALES:
+                case REFERENCE:
+                case SCIENCE: return true;
+                default: return false;
+            }
+        } catch (IllegalArgumentException e) {
+            LOGGER_ERROR.error(e.getMessage());
+            printMessage("Indefinite genre.");
+            return false;
+        }
+    }
+
     public enum Entity {
         AUTHOR, BOOK
     }
@@ -190,6 +214,23 @@ public class ArrayBD {
                 break;
             }
         }
+    }
+
+    public int[] getNotNullIntArray(int[] array) {
+        int count = 0;
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] != 0) count++;
+        }
+        if (count == array.length) return array;
+        int[] temp = new int[count];
+        int j = 0;
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] != 0) {
+                temp[j] = array[i];
+                j++;
+            }
+        }
+        return temp;
     }
 
     public int[] changeSizeOfArray(int[] array) {
@@ -204,9 +245,34 @@ public class ArrayBD {
     }
 
     public int getNextIndexOfArray(int[] array) {
-                for (int i = 0; i < array.length; i++) {
-                    if (array[i] == 0) return i;
-                }
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] == 0) return i;
+        }
         return array.length;
+    }
+
+    public int findIdOfBookOrAuthor(String titleOrFullName, Entity entity) {
+        int id = 0;
+        switch (entity) {
+            case AUTHOR:
+                for (int i = 0; i < authors.length; i++) {
+                    if (authors[i] == null) continue;
+                    if (authors[i].getFullName().equals(titleOrFullName)) {
+                        id = authors[i].getId();
+                        break;
+                    }
+                }
+                break;
+            case BOOK:
+                for (int i = 0; i < books.length; i++) {
+                    if (books[i] == null) continue;
+                    if (books[i].getTitle().equals(titleOrFullName)) {
+                        id = books[i].getId();
+                        break;
+                    }
+                }
+                break;
+        }
+        return id;
     }
 }

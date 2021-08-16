@@ -24,4 +24,16 @@ public class InMemoryAuthorDao {
     public Author[] findAllAuthors() {
         return ArrayBD.getInstance().findAllAuthors();
     }
+
+    public int findIdByFullName(String fullName) {
+        return ArrayBD.getInstance().findIdOfBookOrAuthor(fullName, ArrayBD.Entity.AUTHOR);
+    }
+
+    public void delete(int id, int[] idArray) {
+        ArrayBD.getInstance().delete(id, idArray);
+    }
+
+    public int[] getNotNullIdBooks(int[] idBooks) {
+        return ArrayBD.getInstance().getNotNullIntArray(idBooks);
+    }
 }
