@@ -1,54 +1,46 @@
 package console;
 
-import static console.Console.getInt;
-import static console.Console.printMessage;
-
-/*
-  находить разницу между датами в миллисекундах, секундах, минутах, часах, днях и годах;
-• прибавлять к дате миллисекунды, секунды, минуты, часы, дни и года;
-• вычитать из даты миллисекунды, секунды, минуты, часы, дни и года;
-• сравнивать перечень дат по убыванию и возрастанию;
-
-
- */
+import static console.Console.*;
+import static service.MenuService.*;
 
 public class Menu {
 
     public void calendarMenu() {
-
         printMessage("==Calendar Application==");
         printMessage("=======================");
         while (true) {
             printMessage("--------------------------------------------------------");
+            printMessage("Do you want to change input format? (Y,N)");
+            if (isPositiveAnswer()) {
+                changeInputtingFormat();
+            }
+            printMessage("Do you want to change output format? (Y,N)");
+            if (isPositiveAnswer()) {
+                changeOutputtingFormat();
+            }
+
+            printMessage("--------------------------------------------------------");
             printMessage("What you want to do with date?");
-            printMessage("1 - change format inputting date;");
-            printMessage("2 - change format outputting date;");
-            printMessage("3 - find the odds between dates;");
-            printMessage("4 - add to date;");
-            printMessage("5 - subtract from date;");
-            printMessage("6 - compare list of dates by;");
+            printMessage("1 - find the difference between dates;");
+            printMessage("2 - add to date;");
+            printMessage("2 - subtract from date;");
+            printMessage("4 - compare list of dates by;");
             printMessage("0 - exit from Calendar Application.");
             printMessage("--------------------------------------------------------");
 
             int input = getInt();
             switch (input) {
                 case 1:
-                    printMessage("1 - change format inputting date;");
+                    findDifferenceBetweenTwoDates();
                     break;
                 case 2:
-                    printMessage("2 - change format outputting date;");
+                    addingToDate();
                     break;
                 case 3:
-                    printMessage("3 - find the odds between dates;");
+                    subtractingFromDate();
                     break;
                 case 4:
-                    printMessage("4 - add to date;");
-                    break;
-                case 5:
-                    printMessage("5 - subtract from date;");
-                    break;
-                case 6:
-                    printMessage("6 - compare list of dates by;");
+                    compareListOFDates();
                     break;
                 case 0:
                     printMessage("Good bye!");
@@ -59,5 +51,18 @@ public class Menu {
             }
             if (input == 0) break;
         }
+    }
+
+    private boolean isPositiveAnswer() {
+        String answer = getString();
+        if (answer.trim().equals("Y") || answer.trim().equals("y"))
+            return true;
+        else if (answer.trim().equals("N") || answer.trim().equals("n"))
+            return false;
+        else {
+            printMessage("Please, enter correct answer.");
+            isPositiveAnswer();
+        }
+        return false;
     }
 }
