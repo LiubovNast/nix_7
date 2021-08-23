@@ -7,7 +7,7 @@ public class Menu {
 
     public void calendarMenu() {
         printMessage("==Calendar Application==");
-        printMessage("=======================");
+        printMessage("========================");
         while (true) {
             printMessage("--------------------------------------------------------");
             printMessage("Do you want to change input format? (Y,N)");

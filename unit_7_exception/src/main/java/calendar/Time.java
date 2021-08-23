@@ -8,4 +8,12 @@ public class Time {
     public Time() {
         this.ms = START_OF_CALENDAR;
     }
+
+    public long getMs() {
+        return ms;
+    }
+
+    public void setMs(long ms) {
+        this.ms = ms;
+    }
 }

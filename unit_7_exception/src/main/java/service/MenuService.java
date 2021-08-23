@@ -1,14 +1,15 @@
 package service;
 
 import calendar.Date;
+import calendar.Time;
 import date_formatter.FormatDate;
 import exception.NotFindDateFormat;
 
-import static console.Console.getString;
-import static console.Console.printMessage;
+import static console.Console.*;
 import static date_formatter.ConvertDate.*;
 import static service.DateService.printDate;
 import static service.DateService.readDate;
+import static service.TimeService.getDateFromTime;
 
 public class MenuService {
 
@@ -23,7 +24,6 @@ public class MenuService {
         String inputFormat = getString();
         try {
             FormatDate.inputDateFormat(inputFormat, date);
-            FormatDate.outputDateFormat(inputFormat, date);
         } catch (NotFindDateFormat e) {
             printMessage(e.getMessage());
         }
@@ -47,39 +47,118 @@ public class MenuService {
         try {
             printMessage("Enter first date:");
             Date firstDate = readDate(date);
-            printDate(firstDate, date.getTypeOutput());
             printMessage("Enter second date:");
             Date secondDate = readDate(date);
-            printDate(secondDate, date.getTypeOutput());
             long dif = dif(firstDate, secondDate);
             printMessage("Difference between two dates - " + dif);
         } catch (NotFindDateFormat e) {
-            e.printStackTrace();
+            printMessage(e.getMessage());
         }
     }
 
-    private static long dif(Date firstInput, Date secondInput) {
-        Date first, second;
-        if (firstInput.compareTo(secondInput) < 0) {
-            second = firstInput;
-            first = secondInput;
-        } else {
-            first = firstInput;
-            second = secondInput;
+    private static long dif(Date firstInput, Date secondInput) throws NotFindDateFormat {
+        Time first = TimeService.getTime(firstInput);
+        Time second = TimeService.getTime(secondInput);
+        long result = first.getMs() - second.getMs();
+        if (result < 0) result *= -1;
+        printMessage("What output do you want?\n" +
+                "1 - milliseconds;\n" +
+                "2 - seconds;\n" +
+                "3 - minutes\n" +
+                "4 - hours;\n" +
+                "5 - days;\n" +
+                "6 - years.");
+        int choice = getInt();
+        switch (choice) {
+            case 1:
+                return result;
+            case 2:
+                return convertMillisecondsToSeconds(result);
+            case 3:
+                return convertMillisecondsToMinutes(result);
+            case 4:
+                return convertMillisecondsToHours(result);
+            case 5:
+                return convertMillisecondsToDays(result);
+            case 6:
+                return convertMillisecondsToYears(result);
         }
-        long year = first.getYear() - second.getYear();
-        long month = first.getMonth() - second.getMonth() + convertYearsToMonths(year);
-        long day = first.getDay() - second.getDay() + convertMonthsToDays(month);
-        long hour = first.getHour() - second.getHour() + convertDaysToHours(day);
-        long minute = first.getMin() - second.getMin() + convertHoursToMinutes(hour);
-        long seconds = first.getSec() - second.getSec() + convertMinutesToSeconds(minute);
-        return first.getMs() - second.getMs() + convertSecondsToMilliseconds(seconds);
+        throw new NotFindDateFormat("Indefinite input");
     }
 
     public static void addingToDate() {
+        try {
+            printMessage("Enter date:");
+            Date current = readDate(date);
+            Time time = TimeService.getTime(current);
+            printMessage("What do you want to add?");
+            long number = getNumberForAction();
+            long result = time.getMs() + number;
+            time.setMs(result);
+            printDate(getDateFromTime(time), date.getTypeOutput());
+        } catch (NotFindDateFormat e) {
+            printMessage(e.getMessage());
+        }
     }
 
+    private static long getNumberForAction() {
+        printMessage(
+                "1 - milliseconds;\n" +
+                        "2 - seconds;\n" +
+                        "3 - minutes\n" +
+                        "4 - hours;\n" +
+                        "5 - days;\n" +
+                        "6 - years.");
+        int choice = getInt();
+        long ms = 0L;
+        switch (choice) {
+            case 1:
+                printMessage("Enter milliseconds:");
+                ms = getInt();
+                break;
+            case 2:
+                printMessage("Enter seconds:");
+                long sec = getInt();
+                ms = convertSecondsToMilliseconds(sec);
+                break;
+            case 3:
+                printMessage("Enter minutes:");
+                long minutes = getInt();
+                ms = convertMinutesToMilliseconds(minutes);
+                break;
+            case 4:
+                printMessage("Enter hours:");
+                long hours = getInt();
+                ms = convertHoursToMilliseconds(ms);
+                break;
+            case 5:
+                printMessage("Enter days:");
+                long days = getInt();
+                ms = convertDaysToMilliseconds(days);
+                break;
+            case 6:
+                printMessage("Enter years:");
+                long years = getInt();
+                ms = convertYearsToMilliseconds(years);
+                break;
+        }
+        return ms;
+    }
+
+
     public static void subtractingFromDate() {
+        try {
+            printMessage("Enter date:");
+            Date current = readDate(date);
+            Time time = TimeService.getTime(current);
+            printMessage("What do you want to subtract?");
+            long number = getNumberForAction();
+            long result = time.getMs() - number;
+            time.setMs(result);
+            printDate(getDateFromTime(time), date.getTypeOutput());
+        } catch (NotFindDateFormat e) {
+            printMessage(e.getMessage());
+        }
     }
 
     public static void compareListOFDates() {
