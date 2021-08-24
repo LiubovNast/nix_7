@@ -1,6 +1,6 @@
 package calendar;
 
-public class Date implements Comparable<Date> {
+public class Date {
 
     private int ms;
     private int sec;
@@ -107,25 +107,5 @@ public class Date implements Comparable<Date> {
 
     public void setTypeInput(int typeInput) {
         this.typeInput = typeInput;
-    }
-
-    @Override
-    public int compareTo(Date date) {
-        if (this.year != date.year) {
-            return this.year > date.year ? 1 : -1;
-        } else if (this.month != date.month) {
-            return this.month > date.month ? 1 : -1;
-        } else if (this.day != date.day) {
-            return this.day > date.day ? 1 : -1;
-        } else if (this.hour != date.hour) {
-            return this.hour > date.hour ? 1 : -1;
-        } else if (this.min != date.min) {
-            return this.min > date.min ? 1 : -1;
-        } else if (this.sec != date.sec) {
-            return this.sec > date.sec ? 1 : -1;
-        } else if (this.ms != date.ms) {
-            return this.ms > date.ms ? 1 : -1;
-        }
-        return 0;
     }
 }

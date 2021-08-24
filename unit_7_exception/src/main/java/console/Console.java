@@ -14,7 +14,7 @@ public class Console {
         String str = "";
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         try {
-            str = reader.readLine();
+            str = reader.readLine().trim();
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -22,13 +22,12 @@ public class Console {
     }
 
     public static int getInt() {
-        int num = 0;
         try {
-            num = Integer.parseInt(getString().trim());
+            int num = Integer.parseInt(getString());
+            return num;
         } catch (NumberFormatException e) {
             System.out.println("Write only number:");
-            getInt();
         }
-        return num;
+        return getInt();
     }
 }

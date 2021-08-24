@@ -1,6 +1,6 @@
 package calendar;
 
-public class Time {
+public class Time implements Comparable<Time> {
 
     private long ms;
     private static final long START_OF_CALENDAR = 0L;
@@ -15,5 +15,12 @@ public class Time {
 
     public void setMs(long ms) {
         this.ms = ms;
+    }
+
+    @Override
+    public int compareTo(Time time) {
+        if (this.ms > time.ms) return 1;
+        else if (this.ms < time.ms) return -1;
+        return 0;
     }
 }

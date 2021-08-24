@@ -80,11 +80,11 @@ public class ConvertDate {
         int year = 0;
         while (true) {
             if (isLeap(year)) {
-                if (days >= DAYS_IN_LEAP_YEAR) {
+                if (days > DAYS_IN_LEAP_YEAR) {
                     days -= DAYS_IN_LEAP_YEAR;
                     year++;
                 } else return year;
-            } else if (days >= DAYS_IN_YEAR) {
+            } else if (days > DAYS_IN_YEAR) {
                 days -= DAYS_IN_YEAR;
                 year++;
             } else return year;

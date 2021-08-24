@@ -2,7 +2,6 @@ package service;
 
 import calendar.Date;
 import calendar.Months;
-import console.Console;
 import exception.NotFindDateFormat;
 
 import static calendar.Months.getNumber;
@@ -10,12 +9,16 @@ import static date_formatter.FormatDate.checkCorrectInputAndGetArrayFromString;
 
 public class DateService {
 
-    public static Date readDate(Date date) throws NotFindDateFormat {
+    private static final int FIRST_TYPE = 1;
+    private static final int SECOND_TYPE = 2;
+    private static final int THIRD_TYPE = 3;
+    private static final int FORTH_TYPE = 4;
+
+    public static Date readDate(String stringDate, Date date) throws NotFindDateFormat {
         Date current = new Date();
         current.setTypeInput(date.getTypeInput());
         current.setTypeOutput(date.getTypeOutput());
-        String stringDate = Console.getString();
-        String[] arrayDate = checkCorrectInputAndGetArrayFromString(stringDate, current);
+        String[] arrayDate = checkCorrectInputAndGetArrayFromString(stringDate, date.getTypeInput());
         if (arrayDate != null) {
             current = createDate(arrayDate, current);
         } else throw new NotFindDateFormat("Illegal input");
@@ -26,7 +29,7 @@ public class DateService {
         date.setYear(readYear(arrayDate, date));
         date.setMonth(readMonth(arrayDate, date));
         date.setDay(readDay(arrayDate, date));
-        if (date.getTypeInput() == 4) {
+        if (date.getTypeInput() == FORTH_TYPE) {
             date.setHour(readHour(arrayDate));
             date.setMin(readMinute(arrayDate));
         }
@@ -73,7 +76,7 @@ public class DateService {
 
     private static int readDay(String[] arrayDate, Date date) throws NotFindDateFormat {
         int day;
-        if (date.getTypeInput() == 3) {
+        if (date.getTypeInput() == THIRD_TYPE || date.getTypeInput() == SECOND_TYPE) {
             day = arrayDate[1].equals("") ? 1 : Integer.parseInt(arrayDate[1]);
         } else day = arrayDate[0].equals("") ? 1 : Integer.parseInt(arrayDate[0]);
         if (day < 1) throw new NotFindDateFormat("Illegal date");
@@ -92,10 +95,12 @@ public class DateService {
 
     private static int readMonth(String[] arrayDate, Date date) throws NotFindDateFormat {
         int month;
-        if (date.getTypeInput() == 1 || date.getTypeInput() == 2) {
-            month = arrayDate[1].equals("") ? 0 : Integer.parseInt(arrayDate[1]) - 1;
+        int dateInput = date.getTypeInput();
+        if (dateInput == FIRST_TYPE || dateInput == SECOND_TYPE) {
+            if (dateInput == FIRST_TYPE) month = arrayDate[1].equals("") ? 0 : Integer.parseInt(arrayDate[1]) - 1;
+            else month = arrayDate[0].equals("") ? 0 : Integer.parseInt(arrayDate[0]) - 1;
             if (month < 0 || month > 11) throw new NotFindDateFormat("Indefinite month");
-        } else if (date.getTypeInput() == 3) {
+        } else if (dateInput == THIRD_TYPE) {
             month = arrayDate[0].equals("") ? 0 : getNumber(arrayDate[0].toUpperCase());
         } else month = arrayDate[1].equals("") ? 0 : getNumber(arrayDate[1].toUpperCase());
         return month;
@@ -111,16 +116,16 @@ public class DateService {
 
     public static void printDate(Date date, int outputType) {
         switch (outputType) {
-            case 1:
+            case FIRST_TYPE:
                 System.out.printf("%02d/%02d/%02d\n", date.getDay(), date.getMonth() + 1, date.getYear() % 100);
                 break;
-            case 2:
-                System.out.printf("%d/%d/%04d\n", date.getDay(), date.getMonth() + 1, date.getYear());
+            case SECOND_TYPE:
+                System.out.printf("%d/%d/%04d\n", date.getMonth() + 1, date.getDay(), date.getYear());
                 break;
-            case 3:
+            case THIRD_TYPE:
                 System.out.printf("%s %2d %02d\n", Months.values()[date.getMonth()].toString(), date.getDay(), date.getYear() % 100);
                 break;
-            case 4:
+            case FORTH_TYPE:
                 System.out.printf("%02d %s %04d %02d:%02d\n", date.getDay(), Months.values()[date.getMonth()].toString(),
                         date.getYear(), date.getHour(), date.getMin());
                 break;
