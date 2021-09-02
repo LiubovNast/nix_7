@@ -22,6 +22,7 @@
         <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
         <maven.shade.plugin.version>3.2.0</maven.shade.plugin.version>
         <logs.folder>logs</logs.folder>
+        <logs.archived.folder>archived</logs.archived.folder>
         <logs.test.folder>test_logs</logs.test.folder>
         <logs.life.folder>life_logs</logs.life.folder>
     </properties>
