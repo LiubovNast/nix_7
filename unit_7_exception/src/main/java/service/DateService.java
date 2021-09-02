@@ -20,7 +20,7 @@ public class DateService {
         current.setTypeOutput(date.getTypeOutput());
         String[] arrayDate = checkCorrectInputAndGetArrayFromString(stringDate, date.getTypeInput());
         if (arrayDate != null) {
-            current = createDate(arrayDate, current);
+            createDate(arrayDate, current);
         } else throw new NotFindDateFormat("Illegal input");
         return current;
     }
@@ -83,8 +83,7 @@ public class DateService {
         if (date.getMonth() == 1) {
             if (date.isLeapYear()) {
                 if (day > 29) throw new NotFindDateFormat("In February in leap-year can be only 29 days");
-            }
-            if (day > 28) throw new NotFindDateFormat("In February can be only 28 days");
+            } else if (day > 28) throw new NotFindDateFormat("In February can be only 28 days");
         } else if (date.getMonth() == 3 || date.getMonth() == 5 || date.getMonth() == 8 || date.getMonth() == 10) {
             if (day > 30) throw new NotFindDateFormat("In this month can be only 30 days");
         } else {
@@ -108,7 +107,7 @@ public class DateService {
 
     private static int readYear(String[] arrayDate, Date date) {
         int year = (arrayDate.length < 3 ? 0 : Integer.parseInt(arrayDate[2]));
-        if ((year % 100 == 0 && year % 400 == 0) || year % 4 == 0) {
+        if (year == 0 || year % 4 == 0 || (year % 100 == 0 && year % 400 == 0)) {
             date.setLeapYear(true);
         }
         return year;
@@ -125,10 +124,14 @@ public class DateService {
             case THIRD_TYPE:
                 System.out.printf("%s %2d %02d\n", Months.values()[date.getMonth()].toString(), date.getDay(), date.getYear() % 100);
                 break;
-            case FORTH_TYPE:
-                System.out.printf("%02d %s %04d %02d:%02d\n", date.getDay(), Months.values()[date.getMonth()].toString(),
+            case FORTH_TYPE: {
+                System.out.printf("%02d %s %04d %02d:%02d", date.getDay(), Months.values()[date.getMonth()].toString(),
                         date.getYear(), date.getHour(), date.getMin());
-                break;
+                if (date.getSec() != 0 || date.getMs() != 0) {
+                    System.out.printf(":%02d:%03d\n", date.getSec(), date.getMs());
+                }
+            }
+            break;
         }
     }
 }

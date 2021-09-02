@@ -10,30 +10,6 @@ public class FormatDate {
     private static final int THIRD_TYPE = 3;
     private static final int FORTH_TYPE = 4;
 
-    public static void outputDateFormat(String format, Date date) throws NotFindDateFormat {
-        if (format.matches("[d]{2}/[m]{2}/[y]{2}")) {
-            date.setTypeOutput(FIRST_TYPE);
-        } else if (format.matches("[m]/[d]/[y]{4}")) {
-            date.setTypeOutput(SECOND_TYPE);
-        } else if (format.matches("[m]{3}-[d]-[y]{2}")) {
-            date.setTypeOutput(THIRD_TYPE);
-        } else if (format.matches("[d]{2}-[m]{3}-[y]{4} [0]{2}:[0]{2}")) {
-            date.setTypeOutput(FORTH_TYPE);
-        } else throw new NotFindDateFormat("Indefinite format");
-    }
-
-    public static void inputDateFormat(String format, Date date) throws NotFindDateFormat {
-        if (format.matches("[d]{2}/[m]{2}/[y]{2}")) {
-            date.setTypeInput(FIRST_TYPE);
-        } else if (format.matches("[m]/[d]/[y]{4}")) {
-            date.setTypeInput(SECOND_TYPE);
-        } else if (format.matches("[m]{3}-[d]-[y]{2}")) {
-            date.setTypeInput(THIRD_TYPE);
-        } else if (format.matches("[d]{2}-[m]{3}-[y]{4} [0]{2}:[0]{2}")) {
-            date.setTypeInput(FORTH_TYPE);
-        } else throw new NotFindDateFormat("Indefinite format");
-    }
-
     public static String[] checkCorrectInputAndGetArrayFromString(String inputDate, int typeInput) {
         switch (typeInput) {
             case FIRST_TYPE:

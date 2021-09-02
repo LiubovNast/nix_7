@@ -2,7 +2,6 @@ package service;
 
 import calendar.Date;
 import calendar.Time;
-import date_formatter.FormatDate;
 import exception.IndefiniteInput;
 import exception.NotFindDateFormat;
 
@@ -22,17 +21,13 @@ public class MenuService {
     private static final Date date = new Date();
 
     public static void changeFormat() {
-        try {
-            printMessage("Do you want to change input format? (Y,N)");
-            if (isPositiveAnswer()) {
-                changeInputtingFormat();
-            }
-            printMessage("Do you want to change output format? (Y,N)");
-            if (isPositiveAnswer()) {
-                changeOutputtingFormat();
-            }
-        } catch (NotFindDateFormat e) {
-            printMessage(e.getMessage());
+        printMessage("Do you want to change input format? (Y,N)");
+        if (isPositiveAnswer()) {
+            changeInputtingFormat();
+        }
+        printMessage("Do you want to change output format? (Y,N)");
+        if (isPositiveAnswer()) {
+            changeOutputtingFormat();
         }
     }
 
@@ -48,24 +43,33 @@ public class MenuService {
         }
     }
 
-    private static void changeInputtingFormat() throws NotFindDateFormat {
-        printMessage("choose format for input:\n" +
-                "dd/mm/yy\n" +
-                "m/d/yyyy\n" +
-                "mmm-d-yy\n" +
-                "dd-mmm-yyyy 00:00");
-        String inputFormat = getString();
-        FormatDate.inputDateFormat(inputFormat, date);
+    private static void changeInputtingFormat() {
+        int inputFormat = chooseFormat();
+        date.setTypeInput(inputFormat);
     }
 
-    private static void changeOutputtingFormat() throws NotFindDateFormat {
-        printMessage("choose format for output:\n" +
-                "dd/mm/yy\n" +
-                "m/d/yyyy\n" +
-                "mmm-d-yy\n" +
-                "dd-mmm-yyyy 00:00");
-        String outputFormat = getString();
-        FormatDate.outputDateFormat(outputFormat, date);
+    private static int chooseFormat() {
+        printMessage("choose format for input/output:\n" +
+                "1 - dd/mm/yy\n" +
+                "2 - m/d/yyyy\n" +
+                "3 - mmm-d-yy\n" +
+                "4 - dd-mmm-yyyy 00:00");
+        int choose = getInt();
+        switch (choose) {
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+                return choose;
+            default:
+                printMessage("You enter indefinite format. Please, enter correct number for date:");
+        }
+        return chooseFormat();
+    }
+
+    private static void changeOutputtingFormat() {
+        int outputFormat = chooseFormat();
+        date.setTypeOutput(outputFormat);
     }
 
     public static void findDifferenceBetweenTwoDates() {
@@ -200,8 +204,8 @@ public class MenuService {
         Date dateResult;
         int dateOutput = date.getTypeOutput();
         printMessage("Enter date to compare:");
-        String stringDate = getString();
         printMessage("If you want stop enter - 'exit'.");
+        String stringDate = getString();
         while (!stringDate.equals("exit")) {
             try {
                 time = getTime(readDate(stringDate, date));
