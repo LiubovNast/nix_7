@@ -1,6 +1,11 @@
 package entity;
 
-public class MathSet<Number> {
+import java.util.Arrays;
+import java.lang.Number;
+
+import static console.Console.printMessage;
+
+public class MathSet<Num extends Number & Comparable<Num>> {
 
     private static final int CAPACITY = 10;
     private int size;
@@ -12,70 +17,69 @@ public class MathSet<Number> {
 
     public MathSet() {
         this.size = CAPACITY;
-        mathSet = (Number[]) new Object[CAPACITY];
+        mathSet = new Number[CAPACITY];
     }
 
     public MathSet(int size) {
         this.size = size;
-        mathSet = (Number[]) new Object[size];;
+        mathSet = new Number[size];
     }
 
     public MathSet(Number[] numbers) {
         this.size = numbers.length;
-        mathSet = numbers;
+        mathSet = new Number[size];
+        add(numbers);
     }
 
     public MathSet(Number[]... numbers) {
-        int curentSize = 0;
-        for (int i = 0; i < numbers.length; i++) {
-            curentSize += numbers[i].length;
-        }
-        this.size = curentSize;
-        mathSet = (Number[]) new Object[curentSize];
+        Number[] arrayNumbers = getArray(numbers);
+        mathSet = new MathSet(arrayNumbers).getMathSet();
     }
 
-    public MathSet(MathSet numbers) {
+    public MathSet(MathSet<Num> numbers) {
         this.size = numbers.getSize();
-        mathSet = (Number[]) numbers.getMathSet();
+        mathSet = numbers.getMathSet();
     }
 
-    public MathSet(MathSet... numbers) {
+    public MathSet(MathSet<Num>... numbers) {
         int curentSize = 0;
         for (int i = 0; i < numbers.length; i++) {
+            if (numbers[i] == null) continue;
             curentSize += numbers[i].getSize();
         }
         this.size = curentSize;
-        mathSet = (Number[]) new Object[curentSize];
+        mathSet = new MathSet<Num>(curentSize).getMathSet();
+        for (int i = 0; i < numbers.length; i++) {
+            if (numbers[i] == null) continue;
+            Number[] set = numbers[i].getMathSet();
+            for (int j = 0; j < set.length; j++) {
+                add(set[j]);
+            }
+        }
     }
 
     public int getSize() {
-        return size;
-    }
-    private int getIndex() {
-        for (int i = 0; i < mathSet.length; i++) {
-            if (mathSet[i] == null) return i;
-        }
         return mathSet.length;
     }
 
     void add(Number n) {
+        boolean isUnique = true;
         for (int i = 0; i < mathSet.length; i++) {
-            if (n.equals(mathSet[i])) break;
+            if (mathSet[i] != null) {
+                if (n.equals(mathSet[i])) {
+                    mathSet[i] = n;
+                    isUnique = false;
+                    break;
+                }
+            }
         }
-        int index = getIndex();
-        if (getIndex() == mathSet.length) {
-            mathSet = changeSetSize();
+        if (isUnique) {
+            int index = getNextIndex();
+            if (getNextIndex() == mathSet.length) {
+                mathSet = changeSetSize();
+            }
+            mathSet[index] = n;
         }
-        mathSet[index] = n;
-    }
-
-    private Number[] changeSetSize() {
-        int newSize = (int) ((mathSet.length * 1.5) + 1);
-        Number[] newArray = (Number[]) new Object[newSize];
-        for (int i = 0; i < mathSet.length; i++) {
-            newArray[i] = mathSet[i];
-        }
-        return newArray;
     }
 
     void add(Number... n) {
@@ -84,29 +88,40 @@ public class MathSet<Number> {
         }
     }
 
-    void join(MathSet ms) {
+    void join(MathSet<Num> ms) {
         Number[] numbers = getMathSet();
         for (int i = 0; i < numbers.length; i++) {
             add(numbers[i]);
         }
     }
 
-    void join(MathSet... ms) {
+    void join(MathSet<Num>... ms) {
         for (int i = 0; i < ms.length; i++) {
             join(ms[i]);
         }
     }
 
+    void intersection(MathSet ms) {
+
+    }
+
+    void intersection(MathSet... ms) {
+
+    }
+
     void sortDesc() {
+        ininsertionSortDesc((Num[]) mathSet);
     }
 
     void sortDesc(int firstIndex, int lastIndex) {
+
     }
 
     void sortDesc(Number value) {
     }
 
     void sortAsc() {
+        insertionSortAsc((Num[]) mathSet);
     }
 
     void sortAsc(int firstIndex, int lastIndex) {
@@ -116,7 +131,7 @@ public class MathSet<Number> {
     }
 
     Number get(int index) {
-        return null;
+        return mathSet[index];
     }
 
     Number getMax() {
@@ -136,19 +151,112 @@ public class MathSet<Number> {
     }
 
     Number[] toArray() {
-        return null;
+        return getMathSet();
     }
 
     Number[] toArray(int firstIndex, int lastIndex) {
-        return null;
+        Number[] array = new Number[lastIndex - firstIndex + 1];
+        int j = 0;
+        for (int i = firstIndex; i <= lastIndex; i++) {
+            array[j] = mathSet[i];
+            j++;
+        }
+        return array;
     }
 
     void clear() {
+        for (int i = 0; i < mathSet.length; i++) {
+            if (mathSet != null)
+            mathSet[i] = null;
+        }
     }
 
     void clear(int firstIndex, int lastIndex) {
+        for (int i = firstIndex; i <= lastIndex; i++) {
+            if (mathSet != null)
+                mathSet[i] = null;
+        }
     }
 
     void clear(Number[] numbers) {
+
+    }
+
+    public void printMathSet() {
+        String result = "Your new MathSet is ";
+        String set = "{";
+        for (int i = 0; i < mathSet.length; i++) {
+            if (mathSet[i] != null) {
+                set += mathSet[i] + " ";
+            }
+        }
+        result += set.trim().replaceAll(" ", ", ") + "}";
+        printMessage(result);
+    }
+
+    private Number[] getArray(Number[]... numbers) {
+        int curentSize = 0;
+        for (int i = 0; i < numbers.length; i++) {
+            if (numbers[i] != null)
+                curentSize += numbers[i].length;
+        }
+        Number[] temp = new Number[curentSize];
+        int indexSet = 0;
+        for (int i = 0; i < numbers.length; i++) {
+            if (numbers[i] == null) continue;
+            Number[] set = numbers[i];
+            for (int j = 0; j < set.length; j++) {
+                temp[indexSet + j] = set[j];
+            }
+            indexSet += set.length;
+        }
+        return temp;
+    }
+
+    private void ininsertionSortDesc(Num[] array) {
+        for (int i = 1; i < array.length; i++) {
+            Num temp = array[i];
+            int j = i;
+            while (j > 0 && array[j - 1].compareTo(temp) < 0) {
+                array[j] = array[j - 1];
+                --j;
+            }
+            array[j] = temp;
+        }
+    }
+
+    private void insertionSortAsc(Num[] array) {
+        for (int i = 1; i < array.length; i++) {
+            Num temp = array[i];
+            int j = i;
+            while (j > 0 && array[j - 1].compareTo(temp) >= 0) {
+                array[j] = array[j - 1];
+                --j;
+            }
+            array[j] = temp;
+        }
+    }
+
+    private Number[] changeSetSize() {
+        int newSize = (int) ((mathSet.length * 1.5) + 1);
+        Number[] newArray = new Number[newSize];
+        for (int i = 0; i < mathSet.length; i++) {
+            newArray[i] = mathSet[i];
+        }
+        return newArray;
+    }
+
+    private int getNextIndex() {
+        for (int i = 0; i < mathSet.length; i++) {
+            if (mathSet[i] == null) return i;
+        }
+        return mathSet.length;
+    }
+
+    private boolean isEmpty() {
+        for (int i = 0; i < mathSet.length; i++) {
+            if (mathSet[i] != null) return false;
+        }
+        return true;
     }
 }
