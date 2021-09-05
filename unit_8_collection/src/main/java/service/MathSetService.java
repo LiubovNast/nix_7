@@ -8,6 +8,7 @@ public class MathSetService {
 
     private static final String STRING_SEPARATOR = "===================================";
     private static MathSet mathSet;
+    private static final int CAPACITY = 10;
 
     public void create() {
         printMessage(STRING_SEPARATOR);
@@ -45,10 +46,122 @@ public class MathSetService {
     }
 
     public void add() {
+        printMessage(STRING_SEPARATOR);
+        printMessage("What you want to do with MathSet?");
+        printMessage("1 - to add number;");
+        printMessage("2 - to add array;");
+        printMessage("3 - to join MathSet to your;");
+        printMessage("4 - to join many MathSets to your;");
+        printMessage("5 - intersection MathSet with your;");
+        printMessage("6 - intersection many MathSets with your;");
+        printMessage(STRING_SEPARATOR);
+
+        if (mathSet == null) mathSet = new MathSet();
+        MathSet current = mathSet;
+        MathSet[] arrayOfMathSets;
+        int choice = getInt();
+
+        switch (choice) {
+            case 1:
+            case 2:
+                printMessage("Please, enter number/numbers with space for adding to MathSet");
+                String num = getString();
+                Number[] numbers = getArrayFromString(num);
+                mathSet.add(numbers);
+                break;
+            case 3:
+                printMessage("Please, choose and input MathSet, which you want to join:");
+                create();
+                current.join(mathSet);
+                mathSet = current;
+                break;
+            case 4:
+                printMessage("Please, input MathSets, which you want to join:");
+                arrayOfMathSets = getArrayOfMathSets();
+                current.join(arrayOfMathSets);
+                mathSet = current;
+                break;
+            case 5:
+                printMessage("Please, choose and input MathSet, which you want intersection with:");
+                create();
+                current.intersection(mathSet);
+                mathSet = current;
+                break;
+            case 6:
+                printMessage("Please, input MathSets, which you want intersection with:");
+                arrayOfMathSets = getArrayOfMathSets();
+                current.intersection(arrayOfMathSets);
+                mathSet = current;
+                break;
+            default:
+                printMessage("Sorry, we don't have this action.");
+        }
+        printMessage("Result of action:");
+        mathSet.printMathSet();
+    }
+
+    public void sort() {
+        printMessage(STRING_SEPARATOR);
+        printMessage("What you want to do with MathSet?");
+        printMessage("1 - to sort descending;");
+        printMessage("2 - to sort descending with index from to;");
+        printMessage("3 - to sort descending from value;");
+        printMessage("4 - to sort ascending;");
+        printMessage("5 - to sort ascending with index from to;");
+        printMessage("6 - to sort ascending from value;");
+        printMessage(STRING_SEPARATOR);
+
+        Number value = null;
+        int fromIndex, toIndex;
+        int choice = getInt();
+
+        switch (choice) {
+            case 1:
+                mathSet.sortDesc();
+                break;
+            case 2:
+                printMessage("Please, enter index from:");
+                fromIndex = getInt();
+                printMessage("Please, enter index to:");
+                toIndex = getInt();
+                mathSet.sortDesc(fromIndex, toIndex);
+                break;
+            case 3:
+                printMessage("Please, enter value from:");
+                String numberString = getString();
+                if (numberString.matches("\\-?\\d+\\.\\d+"))
+                    value = Double.parseDouble(numberString);
+                else if (numberString.matches("\\-?\\d+")) value = Integer.parseInt(numberString);
+                mathSet.sortDesc(value);
+                break;
+            case 4:
+                mathSet.sortAsc();
+                break;
+            case 5:
+                printMessage("Please, enter index from:");
+                fromIndex = getInt();
+                printMessage("Please, enter index to:");
+                toIndex = getInt();
+                mathSet.sortAsc(fromIndex, toIndex);
+                break;
+            case 6:
+                printMessage("Please, enter value from:");
+                numberString = getString();
+                if (numberString.matches("\\-?\\d+\\.\\d+"))
+                    value = Double.parseDouble(numberString);
+                else if (numberString.matches("\\-?\\d+")) value = Integer.parseInt(numberString);
+                mathSet.sortAsc(value);
+                break;
+            default:
+                printMessage("Sorry, we don't have this kind of sorting.");
+        }
+
+        printMessage("Result of action:");
+        mathSet.printMathSet();
     }
 
     private Number[][] getArrayOfNumbers() {
-        Number[][] array = new Number[10][];
+        Number[][] array = new Number[CAPACITY][];
         int index = 0;
         printMessage("Please, input numbers with space and rows with 'enter':");
         printMessage("If you want to stop inputting, please enter - 'exit'");
@@ -95,9 +208,6 @@ public class MathSetService {
     public void delete() {
     }
 
-    public void sort() {
-    }
-
     private static boolean isPositiveAnswer() {
         String answer = getString();
         if (answer.trim().equals("Y") || answer.trim().equals("y"))
@@ -108,5 +218,29 @@ public class MathSetService {
             printMessage("Please, enter correct answer.");
             return isPositiveAnswer();
         }
+    }
+
+    private MathSet[] getArrayOfMathSets() {
+        MathSet[] sets = new MathSet[CAPACITY];
+        int index = 0;
+        while (true) {
+            printMessage("Please, choose and add MathSet:");
+            if (index >= sets.length) sets = changeArraySize(sets);
+            create();
+            sets[index] = mathSet;
+            index++;
+            printMessage("Do you want to stop create MathSets? (Y/N)");
+            if (isPositiveAnswer()) break;
+        }
+        return sets;
+    }
+
+    private MathSet[] changeArraySize(MathSet[] sets) {
+        int newSize = (int) ((sets.length * 1.5) + 1);
+        MathSet[] newArray = new MathSet[newSize];
+        for (int i = 0; i < sets.length; i++) {
+            newArray[i] = sets[i];
+        }
+        return newArray;
     }
 }

@@ -17,9 +17,10 @@ public class Menu {
             printMessage(STRING_SEPARATOR);
             printMessage("What you want to do?");
             printMessage("1 - create new MathSet;");
-            printMessage("2 - add into MathSet;");
+            printMessage("2 - add/join into MathSet;");
             printMessage("3 - delete from MathSet;");
             printMessage("4 - sort MathSet;");
+            printMessage("5 - get from MathSet;");
             printMessage("0 - exit from app.");
             printMessage(STRING_SEPARATOR);
 
@@ -36,6 +37,8 @@ public class Menu {
                     break;
                 case 4:
                     service.sort();
+                    break;
+                case 5:
                     break;
                 case 0:
                     printMessage("Good bye!");

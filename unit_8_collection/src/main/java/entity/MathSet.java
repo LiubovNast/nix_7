@@ -65,8 +65,8 @@ public class MathSet<Num extends Number & Comparable<Num>> {
     void add(Number n) {
         boolean isUnique = true;
         for (int i = 0; i < mathSet.length; i++) {
-            if (mathSet[i] != null) {
-                if (n.equals(mathSet[i])) {
+            if (!isEmpty() && mathSet[i] != null) {
+                if (numberComporator((Num) n, (Num) mathSet[i]) == 0) {
                     mathSet[i] = n;
                     isUnique = false;
                     break;
@@ -82,52 +82,75 @@ public class MathSet<Num extends Number & Comparable<Num>> {
         }
     }
 
-    void add(Number... n) {
+    public void add(Number... n) {
         for (int i = 0; i < n.length; i++) {
-            add(n[i]);
+            if (n[i] != null) add(n[i]);
         }
     }
 
-    void join(MathSet<Num> ms) {
-        Number[] numbers = getMathSet();
-        for (int i = 0; i < numbers.length; i++) {
-            add(numbers[i]);
-        }
+    public void join(MathSet<Num> ms) {
+        Number[] first = this.getMathSet();
+        first = getArrayWithoutNull(first);
+        Number[] second = ms.getMathSet();
+        second = getArrayWithoutNull(second);
+        mathSet = new MathSet(first.length + second.length).getMathSet();
+        add(first);
+        add(second);
     }
 
-    void join(MathSet<Num>... ms) {
+    public void join(MathSet<Num>... ms) {
         for (int i = 0; i < ms.length; i++) {
-            join(ms[i]);
+            if (ms[i] != null) join(ms[i]);
         }
     }
 
-    void intersection(MathSet ms) {
+    public void intersection(MathSet ms) {
+        Number[] first = this.getMathSet();
+        first = getArrayWithoutNull(first);
+        Number[] second = ms.getMathSet();
+        second = getArrayWithoutNull(second);
+        int newSize = first.length < second.length ? first.length : second.length;
+        mathSet = new MathSet(newSize).getMathSet();
+        int k = 0;
+        for (int j = 0; j < second.length; j++) {
+            if (second[j] != null) {
+                for (int i = 0; i < first.length; i++) {
+                    if (first[i] != null) {
+                        if (numberComporator((Num) second[j], (Num) first[i]) == 0) {
+                            mathSet[k] = second[j];
+                            k++;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void intersection(MathSet... ms) {
+        for (int i = 0; i < ms.length; i++) {
+            if (ms[i] != null) intersection(ms[i]);
+        }
+    }
+
+    public void sortDesc() {
+        insertionSortDesc((Num[]) mathSet);
+    }
+
+    public void sortDesc(int firstIndex, int lastIndex) {
 
     }
 
-    void intersection(MathSet... ms) {
-
+    public void sortDesc(Number value) {
     }
 
-    void sortDesc() {
-        ininsertionSortDesc((Num[]) mathSet);
-    }
-
-    void sortDesc(int firstIndex, int lastIndex) {
-
-    }
-
-    void sortDesc(Number value) {
-    }
-
-    void sortAsc() {
+    public void sortAsc() {
         insertionSortAsc((Num[]) mathSet);
     }
 
-    void sortAsc(int firstIndex, int lastIndex) {
+    public void sortAsc(int firstIndex, int lastIndex) {
     }
 
-    void sortAsc(Number value) {
+    public void sortAsc(Number value) {
     }
 
     Number get(int index) {
@@ -167,7 +190,7 @@ public class MathSet<Num extends Number & Comparable<Num>> {
     void clear() {
         for (int i = 0; i < mathSet.length; i++) {
             if (mathSet != null)
-            mathSet[i] = null;
+                mathSet[i] = null;
         }
     }
 
@@ -213,13 +236,19 @@ public class MathSet<Num extends Number & Comparable<Num>> {
         return temp;
     }
 
-    private void ininsertionSortDesc(Num[] array) {
+    private void insertionSortDesc(Num[] array) {
         for (int i = 1; i < array.length; i++) {
+            if (array[i] == null) continue;
             Num temp = array[i];
             int j = i;
-            while (j > 0 && array[j - 1].compareTo(temp) < 0) {
-                array[j] = array[j - 1];
-                --j;
+            while (true) {
+                int compare = 0;
+                if (j <= 0) break;
+                compare = numberComporator(array[j - 1], temp);
+                if (compare < 0) {
+                    array[j] = array[j - 1];
+                } else break;
+                j--;
             }
             array[j] = temp;
         }
@@ -227,14 +256,33 @@ public class MathSet<Num extends Number & Comparable<Num>> {
 
     private void insertionSortAsc(Num[] array) {
         for (int i = 1; i < array.length; i++) {
+            if (array[i] == null) continue;
             Num temp = array[i];
             int j = i;
-            while (j > 0 && array[j - 1].compareTo(temp) >= 0) {
-                array[j] = array[j - 1];
-                --j;
+            while (true) {
+                int compare = 0;
+                if (j <= 0) break;
+                compare = numberComporator(array[j - 1], temp);
+                if (compare >= 0) {
+                    array[j] = array[j - 1];
+                } else break;
+                j--;
             }
             array[j] = temp;
         }
+    }
+
+    private int numberComporator(Num first, Num second) {
+        int compare = 0;
+        if (first.getClass() != second.getClass()) {
+            double f = first.doubleValue();
+            double s = second.doubleValue();
+            if (f < s) compare = -1;
+            else if (f > s) compare = 1;
+        } else {
+            compare = first.compareTo(second);
+        }
+        return compare;
     }
 
     private Number[] changeSetSize() {
@@ -258,5 +306,24 @@ public class MathSet<Num extends Number & Comparable<Num>> {
             if (mathSet[i] != null) return false;
         }
         return true;
+    }
+
+    private Number[] getArrayWithoutNull(Number[] array) {
+        int count = 0;
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] != null) count++;
+        }
+        if (count != 0) {
+            Number[] temp = array;
+            array = new Number[count];
+            int j = 0;
+            for (int i = 0; i < temp.length; i++) {
+                if (temp[i] != null) {
+                    array[j] = temp[i];
+                    j++;
+                }
+            }
+        } else array = new Number[1];
+        return array;
     }
 }
