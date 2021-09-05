@@ -1,6 +1,5 @@
 package entity;
 
-import java.util.Arrays;
 import java.lang.Number;
 
 import static console.Console.printMessage;
@@ -11,7 +10,7 @@ public class MathSet<Num extends Number & Comparable<Num>> {
     private int size;
     private Number[] mathSet;
 
-    public Number[] getMathSet() {
+    private Number[] getMathSet() {
         return mathSet;
     }
 
@@ -59,6 +58,7 @@ public class MathSet<Num extends Number & Comparable<Num>> {
     }
 
     public int getSize() {
+        getArrayWithoutNull(mathSet);
         return mathSet.length;
     }
 
@@ -66,7 +66,7 @@ public class MathSet<Num extends Number & Comparable<Num>> {
         boolean isUnique = true;
         for (int i = 0; i < mathSet.length; i++) {
             if (!isEmpty() && mathSet[i] != null) {
-                if (numberComporator((Num) n, (Num) mathSet[i]) == 0) {
+                if (numberComparator((Num) n, (Num) mathSet[i]) == 0) {
                     mathSet[i] = n;
                     isUnique = false;
                     break;
@@ -116,7 +116,7 @@ public class MathSet<Num extends Number & Comparable<Num>> {
             if (second[j] != null) {
                 for (int i = 0; i < first.length; i++) {
                     if (first[i] != null) {
-                        if (numberComporator((Num) second[j], (Num) first[i]) == 0) {
+                        if (numberComparator((Num) second[j], (Num) first[i]) == 0) {
                             mathSet[k] = second[j];
                             k++;
                         }
@@ -133,51 +133,123 @@ public class MathSet<Num extends Number & Comparable<Num>> {
     }
 
     public void sortDesc() {
+        if (mathSet == null) return;
         insertionSortDesc((Num[]) mathSet);
     }
 
     public void sortDesc(int firstIndex, int lastIndex) {
-
+        if (firstIndex > lastIndex) {
+            int temp = firstIndex;
+            firstIndex = lastIndex;
+            lastIndex = temp;
+        }
+        if (isCorrectIndexes(firstIndex, lastIndex)) {
+            if (firstIndex == lastIndex) {
+                return;
+            }
+            Number[][] arrayOfSets = splitArray(firstIndex, lastIndex, mathSet);
+            insertionSortDesc((Num[]) arrayOfSets[1]);
+            mathSet = new MathSet(arrayOfSets).getMathSet();
+        }
     }
 
     public void sortDesc(Number value) {
+        int index = getIndex(value);
+        if (index == mathSet.length) {
+            printMessage("We don't have this value.");
+        } else {
+            sortDesc(index, mathSet.length - 1);
+        }
     }
 
     public void sortAsc() {
+        if (mathSet == null) return;
         insertionSortAsc((Num[]) mathSet);
     }
 
     public void sortAsc(int firstIndex, int lastIndex) {
+        if (firstIndex > lastIndex) {
+            int temp = firstIndex;
+            firstIndex = lastIndex;
+            lastIndex = temp;
+        }
+        if (isCorrectIndexes(firstIndex, lastIndex)) {
+            if (firstIndex == lastIndex) {
+                return;
+            }
+            Number[][] arrayOfSets = splitArray(firstIndex, lastIndex, mathSet);
+            insertionSortAsc((Num[]) arrayOfSets[1]);
+            mathSet = new MathSet(arrayOfSets).getMathSet();
+        }
     }
 
     public void sortAsc(Number value) {
+        int index = getIndex(value);
+        if (index == mathSet.length) {
+            printMessage("We don't have this value.");
+        } else {
+            sortAsc(index, mathSet.length - 1);
+        }
     }
 
-    Number get(int index) {
-        return mathSet[index];
-    }
-
-    Number getMax() {
+    public Number get(int index) {
+        if (isCorrectIndex(index)) {
+            Number value = mathSet[index];
+            return mathSet[index];
+        }
         return null;
     }
 
-    Number getMin() {
-        return null;
+    public Number getMax() {
+        Number[] array = getArrayWithoutNull(mathSet);
+        Number max = array[0];
+        for (int i = 0; i < array.length; i++) {
+            if (numberComparator((Num) array[i], (Num) max) > 0) {
+                max = array[i];
+            }
+        }
+        return max;
     }
 
-    Number getAverage() {
-        return null;
+    public Number getMin() {
+        Number[] array = getArrayWithoutNull(mathSet);
+        Number min = array[0];
+        for (int i = 0; i < array.length; i++) {
+            if (numberComparator((Num) array[i], (Num) min) < 0) {
+                min = array[i];
+            }
+        }
+        return min;
     }
 
-    Number getMedian() {
-        return null;
+    public Number getAverage() {
+        Number[] array = getArrayWithoutNull(mathSet);
+        double sum = 0;
+        for (int i = 0; i < array.length; i++) {
+            sum += array[i].doubleValue();
+        }
+        double result = sum / array.length;
+        return result;
     }
 
-    Number[] toArray() {
+    public Number getMedian() {
+        Number[] array = getArrayWithoutNull(mathSet);
+        insertionSortDesc((Num[]) array);
+        int halfArray = array.length / 2;
+        if (array.length % 2 != 0) {
+            return array[halfArray];
+        } else {
+            double a = array[halfArray].doubleValue();
+            double b = array[halfArray - 1].doubleValue();
+            return (a + b) / 2;
+        }
+    }
+
+    public Number[] toArray() {
         return getMathSet();
     }
 
-    Number[] toArray(int firstIndex, int lastIndex) {
+    public Number[] toArray(int firstIndex, int lastIndex) {
         Number[] array = new Number[lastIndex - firstIndex + 1];
         int j = 0;
         for (int i = firstIndex; i <= lastIndex; i++) {
@@ -187,22 +259,36 @@ public class MathSet<Num extends Number & Comparable<Num>> {
         return array;
     }
 
-    void clear() {
+    public MathSet cut(int firstIndex, int lastIndex) {
+        Number[][] arrayOfSets = new Number[3][];
+        if (firstIndex > lastIndex) {
+            int temp = firstIndex;
+            firstIndex = lastIndex;
+            lastIndex = temp;
+        }
+        if (isCorrectIndexes(firstIndex, lastIndex)) {
+            arrayOfSets = splitArray(firstIndex, lastIndex, mathSet);
+        }
+        return new MathSet(arrayOfSets[0], arrayOfSets[2]);
+    }
+
+    public void clear() {
         for (int i = 0; i < mathSet.length; i++) {
             if (mathSet != null)
                 mathSet[i] = null;
         }
     }
 
-    void clear(int firstIndex, int lastIndex) {
-        for (int i = firstIndex; i <= lastIndex; i++) {
-            if (mathSet != null)
-                mathSet[i] = null;
+    public void clear(Number[] numbers) {
+        for (int i = 0; i < numbers.length; i++) {
+            int index = getIndex(numbers[i]);
+            if (index != mathSet.length) {
+                mathSet[index] = null;
+            } else {
+                printMessage("This number: " + numbers[i] + " does not exist in MathSet.");
+                return;
+            }
         }
-    }
-
-    void clear(Number[] numbers) {
-
     }
 
     public void printMathSet() {
@@ -215,6 +301,78 @@ public class MathSet<Num extends Number & Comparable<Num>> {
         }
         result += set.trim().replaceAll(" ", ", ") + "}";
         printMessage(result);
+    }
+
+    private boolean isCorrectIndex(int index) {
+        if (index < 0) {
+            printMessage("Your index: " + index + " - is out of bounds of MathSet.");
+            return false;
+        } else if (index >= mathSet.length) {
+            printMessage("Your index: " + index + " - is out of bounds of MathSet.");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isCorrectIndexes(int firstIndex, int lastIndex) {
+        if (firstIndex < 0) {
+            printMessage("Your index: " + firstIndex + " - is out of bounds of MathSet.");
+            return false;
+        } else if (lastIndex >= mathSet.length) {
+            printMessage("Your index: " + lastIndex + " - is out of bounds of MathSet.");
+            return false;
+        }
+        return true;
+    }
+
+    private int getIndex(Number value) {
+        for (int i = 0; i < mathSet.length; i++) {
+            if (mathSet[i] != null) {
+                if (numberComparator((Num) value, (Num) mathSet[i]) == 0) {
+                    return i;
+                }
+            }
+        }
+        return mathSet.length;
+    }
+
+    private Number[][] splitArray(int firstIndex, int lastIndex, Number[] numbers) {
+        Number[][] splitArray = new Number[3][];
+        Number[] firstPart, middle, lastPart;
+        firstPart = new Number[firstIndex + 1];
+        middle = new Number[lastIndex - firstIndex + 1];
+        lastPart = new Number[numbers.length - lastIndex];
+
+        for (int i = 0; i < numbers.length; ) {
+            if (i < firstIndex) {
+                int fIndex = 0;
+                while (i < firstIndex) {
+                    firstPart[fIndex] = numbers[i];
+                    i++;
+                    fIndex++;
+                }
+            }
+            if (i == firstIndex) {
+                int mIndex = 0;
+                while (i <= lastIndex) {
+                    middle[mIndex] = numbers[i];
+                    mIndex++;
+                    i++;
+                }
+            }
+            if (i > lastIndex) {
+                int lIndex = 0;
+                while (i < numbers.length) {
+                    lastPart[lIndex] = numbers[i];
+                    i++;
+                    lIndex++;
+                }
+            }
+        }
+        splitArray[0] = firstPart;
+        splitArray[1] = middle;
+        splitArray[2] = lastPart;
+        return splitArray;
     }
 
     private Number[] getArray(Number[]... numbers) {
@@ -244,7 +402,7 @@ public class MathSet<Num extends Number & Comparable<Num>> {
             while (true) {
                 int compare = 0;
                 if (j <= 0) break;
-                compare = numberComporator(array[j - 1], temp);
+                compare = numberComparator(array[j - 1], temp);
                 if (compare < 0) {
                     array[j] = array[j - 1];
                 } else break;
@@ -262,7 +420,7 @@ public class MathSet<Num extends Number & Comparable<Num>> {
             while (true) {
                 int compare = 0;
                 if (j <= 0) break;
-                compare = numberComporator(array[j - 1], temp);
+                compare = numberComparator(array[j - 1], temp);
                 if (compare >= 0) {
                     array[j] = array[j - 1];
                 } else break;
@@ -272,7 +430,7 @@ public class MathSet<Num extends Number & Comparable<Num>> {
         }
     }
 
-    private int numberComporator(Num first, Num second) {
+    private int numberComparator(Num first, Num second) {
         int compare = 0;
         if (first.getClass() != second.getClass()) {
             double f = first.doubleValue();

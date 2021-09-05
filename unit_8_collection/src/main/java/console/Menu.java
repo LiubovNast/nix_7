@@ -39,6 +39,7 @@ public class Menu {
                     service.sort();
                     break;
                 case 5:
+                    service.get();
                     break;
                 case 0:
                     printMessage("Good bye!");
