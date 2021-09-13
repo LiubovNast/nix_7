@@ -15,26 +15,25 @@ import java.util.Map;
 
 public class JsonReader {
 
-    public static <T> List<T> read(String fileName, Object object) throws IOException {
-        if (Files.notExists(Path.of("files_Json"))) {
-            Files.createDirectories(Path.of("files_Json"));
-        }
-        String path = "files_Json\\" + fileName;
-        if (Files.notExists(Path.of(path))) {
-            Files.createFile(Path.of(path));
-        }
-        String json = Files.readString(Paths.get(path)).replaceAll("\n", " ").trim();
-        if (json.isBlank()) return null;
+    public static <T> List<T> read(String fileName, Object object) {
         List<T> result = new ArrayList<>();
         try {
-            result = getObjectFromString(json, object);
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            if (Files.notExists(Path.of("files_Json"))) {
+                return null;
+            }
+            String path = "files_Json\\" + fileName;
+            if (Files.notExists(Path.of(path))) {
+                return null;
+            }
+            String json = Files.readString(Paths.get(path)).replaceAll("\n", " ").trim();
+            result = getListObjectsFromString(json, object);
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | IOException e) {
             System.out.println(e.getMessage());
         }
         return result;
     }
 
-    private static <T> List<T> getObjectFromString(String json, Object object) throws ClassNotFoundException, InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    private static <T> List<T> getListObjectsFromString(String json, Object object) throws ClassNotFoundException, InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         int indexSeparator = json.indexOf(":");
         String nameObject;
         String value;
@@ -46,21 +45,23 @@ public class JsonReader {
                 String[] stringsObject = getArrayFromString(value, '[', ']');
                 for (int i = 0; i < stringsObject.length; i++) {
                     if (stringsObject[i] != null)
-                        arrayList.addAll(getObjectFromString(stringsObject[i], object));
+                        arrayList.addAll(getListObjectsFromString(stringsObject[i], object));
                 }
                 return arrayList;
             } else {
                 List<T> objectList = new ArrayList<>();
                 Class classObject = Class.forName(object.getClass().getPackageName() + "." + nameObject);
-                T result = (T) classObject.getConstructor().newInstance();
                 String[] valueArray = value.split(nameObject);
                 Map<String, String> mapKeyValue;
-                for (int i = 0; i < valueArray.length; i++) {
-                    String[] jsonObjects = getArrayFromString(valueArray[i], '{', '}');
-                    for (int j = 0; j < jsonObjects.length; j++) {
-                        if (jsonObjects[j] != null) {
-                            mapKeyValue = getMap(jsonObjects[j]);
-                            result = setObjectFromMap(mapKeyValue, result);
+                String[] arrays;
+                for (String valAr : valueArray) {
+                    String[] jsonObjects = getArrayFromString(valAr, '{', '}');
+                    for (String jsonOb : jsonObjects) {
+                        if (jsonOb != null) {
+                            T result = (T) classObject.getConstructor().newInstance();
+                            arrays = getArrayFromString(jsonOb, '[', ']');
+                            mapKeyValue = getMap(jsonOb);
+                            result = setObjectFromMap(mapKeyValue, result, arrays);
                             objectList.add(result);
                         }
                     }
@@ -71,7 +72,7 @@ public class JsonReader {
         return null;
     }
 
-    private static <T> T setObjectFromMap(Map<String, String> mapKeyValue, T result) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    private static <T> T setObjectFromMap(Map<String, String> mapKeyValue, T result, String[] arrays) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Field[] fields = result.getClass().getDeclaredFields();
         for (Map.Entry<String, String> element : mapKeyValue.entrySet()) {
             String key = element.getKey().replaceAll("\"", "");
@@ -83,17 +84,20 @@ public class JsonReader {
                     if (fields[i].getType().getSimpleName().equals("String")) {
                         method.invoke(result, stringValue);
                     } else if (fields[i].getType().getSimpleName().equals("boolean")) {
-                        method.invoke(result, Boolean.parseBoolean(stringValue));
+                        if (stringValue.equals("null")) method.invoke(result, false);
+                        else method.invoke(result, Boolean.parseBoolean(stringValue));
                     } else if (fields[i].getType().getSimpleName().endsWith("[]")) {
-                        String array = stringValue.substring(1, element.getValue().length() - 1);
+                        String array = arrays[0].trim();
                         String[] temp = array.split(", ");
                         int[] indexArray = new int[temp.length];
                         for (int a = 0; a < temp.length; a++) {
-                            indexArray[a] = Integer.parseInt(temp[a]);
+                            if (temp[a].equals("null")) indexArray[a] = 0;
+                            else indexArray[a] = Integer.parseInt(temp[a]);
                         }
                         method.invoke(result, indexArray);
                     } else {
-                        method.invoke(result, Integer.parseInt(stringValue));
+                        if (stringValue.equals("null")) method.invoke(result, 0);
+                        else method.invoke(result, Integer.parseInt(stringValue));
                     }
                 }
             }
@@ -104,11 +108,15 @@ public class JsonReader {
     private static Map<String, String> getMap(String value) {
         Map<String, String> map = new HashMap<>();
         String[] keyValue = value.split(", ");
-        for (int i = 0; i < keyValue.length; i++) {
-            int indexSeparator = keyValue[i].indexOf(":");
-            String key = keyValue[i].substring(0, indexSeparator);
-            String mapValue = keyValue[i].substring(indexSeparator + 1);
-            map.put(key, mapValue);
+        for (String keyVal : keyValue) {
+            if (keyVal.contains(":")) {
+                int indexSeparator = keyVal.indexOf(":");
+                String key = keyVal.substring(0, indexSeparator);
+                if (indexSeparator < keyVal.length()) {
+                    String mapValue = keyVal.substring(indexSeparator + 1);
+                    map.put(key, mapValue);
+                } else map.put(key, "null");
+            }
         }
         return map;
     }
@@ -117,19 +125,14 @@ public class JsonReader {
         return json.startsWith("{");
     }
 
-    private static boolean isArray(String json) {
-        return json.startsWith("[");
-    }
-
     private static String[] getArrayFromString(String string, char open, char close) {
         String[] objects = new String[countBrackets(string, open, close)];
         for (int i = 0; i < objects.length; i++) {
             String first = getStringWithOneTypeOfBrackets(string, open, close);
             int index;
             if (first != null) {
-                index = first.length();
+                String second = string.replaceFirst(first, "");
                 objects[i] = first.trim();
-                String second = string.substring(index).trim();
                 string = second;
             } else break;
         }

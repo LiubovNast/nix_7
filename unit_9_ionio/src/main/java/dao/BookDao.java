@@ -2,6 +2,8 @@ package dao;
 
 import entity.Book;
 
+import java.util.List;
+
 public interface BookDao {
 
     void create(Book book);
@@ -12,7 +14,9 @@ public interface BookDao {
 
     Book findBookById(int id);
 
-    Book[] findAllBooks();
+    List<Book> findAllBooks();
 
     int findIdByTitle(String title);
+
+    void updateArrayOfIdAuthors(int id, Book book);
 }

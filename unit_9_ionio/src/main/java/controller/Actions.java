@@ -9,6 +9,8 @@ import facade.FacadeImpl;
 import service.AuthorService;
 import service.BookService;
 
+import java.util.List;
+
 import static controller.Console.*;
 
 public class Actions {
@@ -16,7 +18,6 @@ public class Actions {
     BookService bookService = new BookService();
     AuthorService authorService = new AuthorService();
     Facade facade = new FacadeImpl(authorService, bookService);
-    private static final int ERROR = 0;
 
     public void addNewBook() {
         AuthorDto author = new AuthorDto();
@@ -38,7 +39,7 @@ public class Actions {
         String answer = getString();
         boolean isMoreAuthors = isMoreAuthors(answer);
         while (isMoreAuthors) {
-//            addMoreAuthors(book);
+            addMoreAuthors(book);
             printMessage("This book has more authors? Y/N?");
             answer = getString();
             isMoreAuthors = isMoreAuthors(answer);
@@ -76,48 +77,36 @@ public class Actions {
         }
     }
 
-    private void addMoreAuthors(Book book) {
+    private void addMoreAuthors(BookDto book) {
         printMessage("Input full Name author of book:");
         String fullName = getString();
-        Author author = new Author();
+        AuthorDto author = new AuthorDto();
         author.setFullName(fullName);
-        author.setIdBooks(new int[]{book.getId()});
-        authorService.create(author);
-        bookService.updateArrayOfIdAuthors(ERROR, book);
         book.setHasOneAuthor(false);
+        facade.createNewAuthorToBook(author, book);
     }
 
     public void removeBook() {
-        Author author;
         printMessage("Input a title of a book:");
         String title = getString();
-        int id = bookService.findIdByTitle(title);
-        int[] idAuthors = bookService.findBookById(id).getIdAuthors();
-        bookService.delete(id);
-        for (int j = 0; j < idAuthors.length; j++) {
-            if (idAuthors[j] == 0) continue;
-            author = authorService.findAuthorById(idAuthors[j]);
-            if (author.isHasOneBook()) {
-                authorService.delete(idAuthors[j]);
-            } else {
-                authorService.delete(id, author);
-            }
-        }
+        BookDto bookDto = new BookDto();
+        bookDto.setTitle(title);
+        facade.delete(bookDto);
     }
 
     public void takeListAllBooks() {
         printMessage("This is list of all our books:");
-        Book[] books = bookService.findAllBooks();
-        for (int i = 0; i < books.length; i++) {
-            printBook(books[i]);
+        List<Book> books = bookService.findAllBooks();
+        for (Book book : books) {
+            printBook(book);
         }
     }
 
     public void takeListAllAuthors() {
         printMessage("This is list of all our authors:");
-        Author[] authors = authorService.findAllAuthors();
-        for (int i = 0; i < authors.length; i++) {
-            printAuthor(authors[i]);
+        List<Author> authors = authorService.findAllAuthors();
+        for (Author author : authors) {
+            printAuthor(author);
         }
     }
 
@@ -130,15 +119,14 @@ public class Actions {
         } else {
             printMessage("Input a new title of book:");
             String newTitle = getString();
-            printMessage("Input a new genre of book:");
-            String genre = getString();
+            String genre = getGenre();
             printMessage("Input a new count of pages of book:");
             int countOfPages = getInt();
-            Book book = new Book();
-            book.setTitle(title);
+            BookDto book = new BookDto();
+            book.setTitle(newTitle);
             book.setGenre(genre);
             book.setCountOfPages(countOfPages);
-            bookService.update(book, id);
+            facade.update(id, book);
         }
     }
 
@@ -156,10 +144,10 @@ public class Actions {
         boolean isFind = false;
         printMessage("Input a genre of book:");
         String genre = getString();
-        Book[] books = bookService.findAllBooks();
-        for (int i = 0; i < books.length; i++) {
-            if (books[i].getGenre().equals(genre)) {
-                printBook(books[i]);
+        List<Book> books = bookService.findAllBooks();
+        for (Book book : books) {
+            if (book.getGenre().equals(genre)) {
+                printBook(book);
                 isFind = true;
             }
         }
@@ -181,9 +169,12 @@ public class Actions {
     private void printBook(Book book) {
         int[] idAuthors = book.getIdAuthors();
         printMessage(book.toString());
-        for (int j = 0; j < idAuthors.length; j++) {
-            if (idAuthors[j] == 0) continue;
-            printMessage("- author's full name: " + authorService.findAuthorById(idAuthors[j]).getFullName());
+        for (int id : idAuthors) {
+            if (id == 0) continue;
+            Author author = authorService.findAuthorById(id);
+            if (author != null) {
+                printMessage("- author's full name: " + author.getFullName());
+            }
         }
         printMessage("");
     }
@@ -191,9 +182,12 @@ public class Actions {
     private void printAuthor(Author author) {
         printMessage(author.toString());
         int[] idBooks = author.getIdBooks();
-        for (int j = 0; j < idBooks.length; j++) {
-            if (idBooks[j] == 0) continue;
-            printMessage("- title: " + bookService.findBookById(idBooks[j]).getTitle());
+        for (int id : idBooks) {
+            if (id == 0) continue;
+            Book book = bookService.findBookById(id);
+            if (book != null) {
+                printMessage("- title: " + book.getTitle());
+            }
         }
         printMessage("");
     }

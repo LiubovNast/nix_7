@@ -7,23 +7,70 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
 
 public class JsonWriter {
 
-    public static void write(Object out, String fileName) throws IOException, IllegalAccessException, NoSuchFieldException {
-        if (Files.notExists(Path.of("files_Json"))) {
-            Files.createDirectories(Path.of("files_Json"));
+    public static <T> void write(List<T> list, String fileName) {
+        String string = "{\n";
+        for (T object : list) {
+            if (list.indexOf(object) != 0) {
+                string += ",\n";
+            }
+
+            try {
+                string += getStringForJson(object);
+            } catch (IllegalAccessException | NoSuchFieldException e) {
+                System.out.println(e.getMessage());
+            }
         }
-        String path = "files_Json\\" + fileName;
-        if (Files.notExists(Path.of(path))) {
-            Files.createFile(Path.of(path));
+        string += "}";
+        createAndWriteInFile(fileName, string);
+    }
+
+    public static <T> void write(T[] array, String fileName) {
+        String string = "{\n";
+        for (T object : array) {
+            if (array[0] != object) {
+                string += ",\n";
+            }
+            try {
+                string += getStringForJson(object);
+            } catch (IllegalAccessException | NoSuchFieldException e) {
+                System.out.println(e.getMessage());
+            }
         }
-        String string = getStringForJson(out);
-        Files.writeString(Paths.get(path), string);
+        string += "\n}";
+        createAndWriteInFile(fileName, string);
+    }
+
+    public static <T> void write(T object, String fileName) {
+        String string = "";
+        try {
+            string += getStringForJson(object);
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            System.out.println(e.getMessage());
+        }
+        createAndWriteInFile(fileName, string);
+    }
+
+    private static void createAndWriteInFile(String fileName, String string) {
+        try {
+            if (Files.notExists(Path.of("files_Json"))) {
+                Files.createDirectories(Path.of("files_Json"));
+            }
+            String path = "files_Json\\" + fileName;
+            if (Files.notExists(Path.of(path))) {
+                Files.createFile(Path.of(path));
+            }
+            Files.writeString(Paths.get(path), string);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     private static String getStringForJson(Object o) throws IllegalAccessException, NoSuchFieldException {
-        String string = "{\n";
+        String string = "";
         if (o.getClass().isPrimitive()) {
             string += getStringFromPrimitive(o);
         } else if (o.getClass().isArray()) {
@@ -43,7 +90,6 @@ public class JsonWriter {
             }
             string += "}\n";
         }
-        string += "}";
         return string;
     }
 
@@ -79,7 +125,7 @@ public class JsonWriter {
 
     private static String getStringFromArray(Object object) throws NoSuchFieldException, IllegalAccessException {
         String string = "\"" + object.getClass().getSimpleName() + "\":";
-         string += "[\n";
+        string += "[\n";
         int length = Array.getLength(object);
         for (int i = 0; i < length; i++) {
             Object objectFromArray = Array.get(object, i);

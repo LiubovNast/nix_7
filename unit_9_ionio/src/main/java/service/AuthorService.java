@@ -4,6 +4,8 @@ import dao.AuthorDao;
 import dao.FileAuthorDao;
 import entity.Author;
 
+import java.util.List;
+
 import static controller.Console.printMessage;
 
 public class AuthorService {
@@ -14,18 +16,40 @@ public class AuthorService {
         if (!checkAuthorFullName(author.getFullName())) {
             return;
         }
-        Author[] authors = findAllAuthors();
+        List<Author> authors = findAllAuthors();
         if (authors != null) {
-            for (int i = 0; i < authors.length; i++) {
-                if (authors[i] != null) {
-                    if (authors[i].getFullName().equals(author.getFullName())) {
-                        updateArrayOfIdBooks(author.getIdBooks()[0], authors[i]);
-                        authors[i].setHasOneBook(false);
-                    }
+            for (Author authorInDb : authors) {
+                if (authorInDb.getFullName().equals(author.getFullName())) {
+                    authorDao.updateArrayOfIdBooks(author.getIdBooks()[0], authorInDb);
+                    return;
                 }
             }
         }
         authorDao.create(author);
+    }
+
+    public void delete(int id) {
+        authorDao.delete(id);
+    }
+
+    public Author findAuthorById(int id) {
+        return authorDao.findAuthorById(id);
+    }
+
+    public List<Author> findAllAuthors() {
+        return authorDao.findAllAuthors();
+    }
+
+    public int findIdByFullName(String fullName) {
+        return authorDao.findIdByFullName(fullName);
+    }
+
+    public void delete(int id, Author author) {
+        authorDao.delete(id, author);
+    }
+
+    public void updateArrayOfIdBooks(int idBook, Author author) {
+        authorDao.updateArrayOfIdBooks(idBook, author);
     }
 
     private boolean checkAuthorFullName(String fullName) {
@@ -37,40 +61,5 @@ public class AuthorService {
             return false;
         }
         return true;
-    }
-
-    private void updateArrayOfIdBooks(int idBook, Author authorInBD) {
-//        int[] array = authorInBD.getIdBooks();
-//        array = ArrayBD.getInstance().changeSizeOfArray(array);
-//        array[ArrayBD.getInstance().getNextIndexOfArray(array)] = idBook;
-//        authorInBD.setIdBooks(array);
-    }
-
-    public void update(Author author) {
-        authorDao.update(author);
-    }
-
-    public void delete(int id) {
-        authorDao.delete(id);
-    }
-
-    public Author findAuthorById(int id) {
-        return authorDao.findAuthorById(id);
-    }
-
-    public Author[] findAllAuthors() {
-        return authorDao.findAllAuthors();
-    }
-
-    public int findIdByFullName(String fullName) {
-        return authorDao.findIdByFullName(fullName);
-    }
-
-    public void delete(int id, Author author) {
-        int[] idBooks = author.getIdBooks();
-        authorDao.delete(id, idBooks);
-        idBooks = authorDao.getNotNullIdBooks(idBooks);
-        if (idBooks.length == 1)
-            author.setHasOneBook(true);
     }
 }

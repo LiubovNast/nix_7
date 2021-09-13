@@ -4,6 +4,8 @@ import dao.BookDao;
 import dao.FileBookDao;
 import entity.Book;
 
+import java.util.List;
+
 import static controller.Console.printMessage;
 
 public class BookService {
@@ -32,19 +34,16 @@ public class BookService {
         return bookDao.findBookById(id);
     }
 
-    public Book[] findAllBooks() {
+    public List<Book> findAllBooks() {
         return bookDao.findAllBooks();
-    }
-
-    public void updateArrayOfIdAuthors(int id, Book book) {
-//        int[] array = book.getIdAuthors();
-//        array = ArrayBD.getInstance().changeSizeOfArray(array);
-//        array[ArrayBD.getInstance().getNextIndexOfArray(array)] = id;
-//        book.setIdAuthors(array);
     }
 
     public int findIdByTitle(String title) {
         return bookDao.findIdByTitle(title);
+    }
+
+    public void updateArrayOfIdAuthors(int id, Book book) {
+        bookDao.updateArrayOfIdAuthors(id, book);
     }
 
     private boolean checkCountOfPage(int countOfPages) {

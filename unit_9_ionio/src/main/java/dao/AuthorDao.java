@@ -2,6 +2,8 @@ package dao;
 
 import entity.Author;
 
+import java.util.List;
+
 public interface AuthorDao {
 
     void create(Author author);
@@ -12,11 +14,11 @@ public interface AuthorDao {
 
     Author findAuthorById(int id);
 
-    Author[] findAllAuthors();
+    List<Author> findAllAuthors();
 
     int findIdByFullName(String fullName);
 
-    void delete(int id, int[] idArray);
+    void delete(int id, Author author);
 
-    int[] getNotNullIdBooks(int[] idBooks);
+    void updateArrayOfIdBooks(int idBook, Author authorInBD);
 }
