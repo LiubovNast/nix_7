@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import static console.Console.*;
 
 public class UniqueName {
+
     private static final String FILE = "files/names.txt";
     private static final String STRING_SEPARATOR = "---------------------------------------------";
     private String names;
