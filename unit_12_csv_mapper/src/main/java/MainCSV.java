@@ -1,15 +1,17 @@
+import entity.Table;
 import entity.User;
-import service.CSVMapper;
-import service.CSVParser;
+import service.*;
 
 import java.util.List;
 
 public class MainCSV {
 
     public static void main(String[] args) {
-        String[] csvStrings = CSVParser.read(args[0]);
+        CSVParser parser = new CSVParser();
+        Table table = parser.read(args[0]);
 
-        List<User> list = CSVMapper.getObjects(csvStrings, User.class);
+        CSVMapper mapper = new CSVMapper();
+        List<User> list = mapper.getObjects(table, User.class);
         for (User user : list) {
             System.out.println(user.toString());
         }

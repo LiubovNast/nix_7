@@ -1,5 +1,8 @@
 package service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import entity.Table;
 import exception.IllegalDateException;
 
 import java.lang.reflect.Field;
@@ -9,34 +12,38 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+
 public class CSVMapper {
 
-    public static <T> List<T> getObjects(String[] csvStrings, Class<T> objectClass) {
-        String[] firstString = csvStrings[0].replace("\r", "").split(", ");
-        List<T> result = new ArrayList<>();
-        Map<String, Integer> fieldsName = getMapFieldsName(firstString);
+    private static final Logger log = LoggerFactory.getLogger(CSVMapper.class);
+    private static final DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
-        for (int i = 1; i < csvStrings.length; i++) {
+    public <T> List<T> getObjects(Table table, Class<T> objectClass) {
+        List<String> header = table.getHeader();
+        List<String> rows = table.getRows();
+        List<T> result = new ArrayList<>();
+        Map<String, Integer> fieldsName = getMapFieldsName(header);
+
+        for (String row : rows) {
             try {
-                result.add(getObjectFromString(fieldsName, csvStrings[i], objectClass));
+                result.add(getObjectFromString(fieldsName, row, objectClass));
             } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException | IllegalDateException e) {
-                throw new RuntimeException();
+                log.error("Exception ", e);
             }
         }
         return result;
     }
 
-    private static Map<String, Integer> getMapFieldsName(String[] fieldsName) {
+    private static Map<String, Integer> getMapFieldsName(List<String> fieldsName) {
         Map<String, Integer> mapNames = new HashMap<>();
-        for (int i = 0; i < fieldsName.length; i++) {
-            mapNames.put(fieldsName[i], i);
+        for (int i = 0; i < fieldsName.size(); i++) {
+            mapNames.put(fieldsName.get(i), i);
         }
         return mapNames;
     }
 
     private static <T> T getObjectFromString(Map<String, Integer> fieldsName, String csvString, Class<T> objectClass) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, IllegalDateException {
         Field[] fields = objectClass.getDeclaredFields();
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         T result = objectClass.getConstructor().newInstance();
         String[] values = csvString.split(", ");
         for (Field field : fields) {
@@ -59,7 +66,8 @@ public class CSVMapper {
                 try {
                     field.set(result, format.parse(fieldValue));
                 } catch (ParseException e) {
-                    throw new IllegalDateException("Wrong date format");
+                    log.error("Wrong date format");
+                    throw new IllegalDateException(e);
                 }
             }
         }
