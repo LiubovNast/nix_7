@@ -27,14 +27,9 @@ public class JDBCService {
         if (solutions != null) {
             for (Solution solution : solutions) {
                 int id_problem = solution.getProblemId();
-                for (Problem problem : problems) {
-                    if (problem.getId() == id_problem) {
-                        log.info("Solution for problem {} is exist - {}", id_problem, solution.getCost());
-                        problems.remove(problem);
-                        break;
-                    }
-                }
+                problems.removeIf(p -> p.getId() == id_problem);
             }
+            solutions.clear();
         }
 
         if (!problems.isEmpty()) {
@@ -73,6 +68,8 @@ public class JDBCService {
             if (!solutions.isEmpty()) {
                 solutionService.create(solutions);
             }
+        } else {
+            log.info("You don't have unsolved problems.");
         }
     }
 }
