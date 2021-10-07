@@ -16,7 +16,7 @@ public class MainHibernate {
              Session session = sessionFactory.openSession()) {
             LOG.info("Create session");
             FindTheNearestLesson theNearestLesson = new FindTheNearestLesson(() -> session);
-            theNearestLesson.nextLessonForStudent(1245);
+            theNearestLesson.nextLessonForStudent(args[0]);
         }
     }
 }

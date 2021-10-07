@@ -21,7 +21,7 @@ public class Student {
 
     @NaturalId
     @Column(name = "phone", unique = true, nullable = false)
-    private Long phoneNumber;
+    private String phoneNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
@@ -54,11 +54,11 @@ public class Student {
         this.lastName = lastName;
     }
 
-    public long getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(long phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
