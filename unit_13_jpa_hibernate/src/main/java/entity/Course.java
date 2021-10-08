@@ -1,5 +1,7 @@
 package entity;
 
+import org.hibernate.annotations.NaturalId;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -11,7 +13,8 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @NaturalId
+    @Column(unique = true, nullable = false)
     private String name;
 
     @OneToMany(mappedBy = "course")
